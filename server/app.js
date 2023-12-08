@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-const tasks = require('./routes/tasks');
+const properties = require('./routes/properties');
+const users = require('./routes/users');
 const connectDB = require('./db/connect');
 require('dotenv').config();
 const notFound = require('./middleware/not-found');
@@ -12,7 +13,8 @@ app.use(express.static('./public'));
 app.use(errorHandlerMiddleware);
 
 // routes
-app.use('/api/v1/tasks', tasks);
+app.use('/api/v1/users', users);
+app.use('/api/v1/properties', properties);
 app.use(notFound);
 
 const port = 3000;

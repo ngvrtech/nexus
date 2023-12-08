@@ -5,9 +5,8 @@ const PropertySchema = new mongoose.Schema({
 		type: String,
 		required: [true, 'Must provide an address'],
 		trim: true,
-		maxLength: [100, 'Name cannot exceed 100 characters'],
 	},
-	photo: {
+	image: {
 		type: String,
 		default: 'https://placehold.co/600x400?text=Property\nImage',
 	},
@@ -20,7 +19,7 @@ const PropertySchema = new mongoose.Schema({
 	kitchenInventoryChecklist: {
 		type: Array,
 	},
-	oneMonthInspection: {
+	monthlyInspection: {
 		type: Array,
 	},
 	twoMonthInspection: {
