@@ -1,5 +1,6 @@
 const List = require('../models/List');
 const asyncWrapper = require('../middleware/async');
+const { createCustomError } = require('../errors/custom-error');
 
 const getAllLists = asyncWrapper(async (req, res) => {
 	const lists = await List.find({});
@@ -11,20 +12,14 @@ const addList = asyncWrapper(async (req, res) => {
 	res.status(201).json({ list });
 });
 
-const getList = async (req, res, next) => {
-	try {
-		const { id: listID } = req.params;
-		const list = await List.findOne({ _id: listID });
-		if (!list) {
-			const error = newError('List Not Found');
-			error.status = 404;
-			return next(error);
-		}
-		res.status(200).json({ list });
-	} catch (error) {
-		res.status(500).json({ msg: error });
+const getList = asyncWrapper(async (req, res, next) => {
+	const { id: listID } = req.params;
+	const list = await List.findOne({ _id: listID });
+	if (!list) {
+		return next(createCustomError(`No list with id: ${listID}`, 404));
 	}
-};
+	res.status(200).json({ list });
+});
 
 const editList = asyncWrapper(async (req, res) => {
 	const { id: listID } = req.params;
@@ -33,7 +28,7 @@ const editList = asyncWrapper(async (req, res) => {
 		runValidators: true,
 	});
 	if (!list) {
-		return res.status(404).json({ msg: `No list with id: ${listID}` });
+		return next(createCustomError(`No list with id: ${listID}`, 404));
 	}
 	res.status(200).json({ list });
 });
@@ -42,7 +37,7 @@ const deleteList = asyncWrapper(async (req, res) => {
 	const { id: listID } = req.params;
 	const list = await List.findOneAndDelete({ _id: listID });
 	if (!list) {
-		return res.status(404).json({ msg: `No list with id: ${listID}` });
+		return next(createCustomError(`No list with id: ${listID}`, 404));
 	}
 	res.status(200).json({ list });
 });

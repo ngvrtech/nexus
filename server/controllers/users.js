@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const asyncWrapper = require('../middleware/async');
+const { createCustomError } = require('../errors/custom-error');
 
 const getAllUsers = asyncWrapper(async (req, res) => {
 	const users = await User.find({});
@@ -11,20 +12,14 @@ const addUser = asyncWrapper(async (req, res) => {
 	res.status(201).json({ user });
 });
 
-const getUser = async (req, res, next) => {
-	try {
-		const { id: userID } = req.params;
-		const user = await User.findOne({ _id: userID });
-		if (!user) {
-			const error = newError('User Not Found');
-			error.status = 404;
-			return next(error);
-		}
-		res.status(200).json({ user });
-	} catch (error) {
-		res.status(500).json({ msg: error });
+const getUser = asyncWrapper(async (req, res, next) => {
+	const { id: userID } = req.params;
+	const user = await User.findOne({ _id: userID });
+	if (!user) {
+		return next(createCustomError(`No user with id: ${userID}`, 404));
 	}
-};
+	res.status(200).json({ user });
+});
 
 const editUser = asyncWrapper(async (req, res) => {
 	const { id: userID } = req.params;
@@ -33,7 +28,7 @@ const editUser = asyncWrapper(async (req, res) => {
 		runValidators: true,
 	});
 	if (!user) {
-		return res.status(404).json({ msg: `No user with id: ${userID}` });
+		return next(createCustomError(`No user with id: ${userID}`, 404));
 	}
 	res.status(200).json({ user });
 });
@@ -42,7 +37,7 @@ const deleteUser = asyncWrapper(async (req, res) => {
 	const { id: userID } = req.params;
 	const user = await User.findOneAndDelete({ _id: userID });
 	if (!user) {
-		return res.status(404).json({ msg: `No user with id: ${userID}` });
+		return next(createCustomError(`No user with id: ${userID}`, 404));
 	}
 	res.status(200).json({ user });
 });

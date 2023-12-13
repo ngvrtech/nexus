@@ -1,5 +1,6 @@
 const Record = require('../models/Record');
 const asyncWrapper = require('../middleware/async');
+const { createCustomError } = require('../errors/custom-error');
 
 const getAllRecords = asyncWrapper(async (req, res) => {
 	const records = await Record.find({});
@@ -11,20 +12,14 @@ const addRecord = asyncWrapper(async (req, res) => {
 	res.status(201).json({ record });
 });
 
-const getRecord = async (req, res, next) => {
-	try {
-		const { id: recordID } = req.params;
-		const record = await Record.findOne({ _id: recordID });
-		if (!record) {
-			const error = newError('Record Not Found');
-			error.status = 404;
-			return next(error);
-		}
-		res.status(200).json({ record });
-	} catch (error) {
-		res.status(500).json({ msg: error });
+const getRecord = asyncWrapper(async (req, res, next) => {
+	const { id: recordID } = req.params;
+	const record = await Record.findOne({ _id: recordID });
+	if (!record) {
+		return next(createCustomError(`No record with id : ${recordID}`, 404));
 	}
-};
+	res.status(200).json({ record });
+});
 
 const editRecord = asyncWrapper(async (req, res) => {
 	const { id: recordID } = req.params;
@@ -33,7 +28,7 @@ const editRecord = asyncWrapper(async (req, res) => {
 		runValidators: true,
 	});
 	if (!record) {
-		return res.status(404).json({ msg: `No record with id: ${recordID}` });
+		return next(createCustomError(`No record with id: ${recordID}`, 404));
 	}
 	res.status(200).json({ record });
 });
@@ -42,7 +37,7 @@ const deleteRecord = asyncWrapper(async (req, res) => {
 	const { id: recordID } = req.params;
 	const record = await Record.findOneAndDelete({ _id: recordID });
 	if (!record) {
-		return res.status(404).json({ msg: `No record with id: ${recordID}` });
+		return next(createCustomError(`No record with id: ${recordID}`, 404));
 	}
 	res.status(200).json({ record });
 });
