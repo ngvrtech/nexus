@@ -1,39 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+// import "bootstrap/dist/css/bootstrap.min.css";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   return (
-    <div className="container">
-      <div className="offset-2 col-9">
-        <div className="row mb-3">
+    <div className="container-fluid vh-100 d-flex align-items-center justify-content-center">
+      <div className="row">
+        <div className="col-12 text-center">
           <div>
-            <img src="/ngvr-logo.png" />
+            <img className="mb-4" src="/ngvr-logo.png" />
           </div>
-          Login form here
           <form>
             <div>
-              <label htmlFor="username">
-                Username
+              <div className="form-floating mb-3">
                 <input
-                  onChange={(e) => setUsername(e.target.value)}
-                  id="username"
-                  value={username}
                   placeholder="Username"
+                  name="username"
+                  id="username"
+                  type="text"
+                  maxLength="50"
+                  required
+                  className="form-control"
+                  onChange={(e) => setUsername(e.target.value)}
+                  value={username}
                 />
-              </label>
+                <label htmlFor="username">Username</label>
+              </div>
             </div>
-            <div>
-              <label htmlFor="password">
-                Password
-                <input
-                  onChange={(e) => setPassword(e.target.value)}
-                  id="password"
-                  value={password}
-                  placeholder="Password"
-                />
-              </label>
+            <div className="form-floating mb-3">
+              <input
+                placeholder="Password"
+                name="password"
+                id="password"
+                type="password"
+                maxLength="50"
+                required
+                className="form-control"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+              <label htmlFor="password">Password</label>
             </div>
             <button className="btn btn-primary">Login</button>
           </form>
