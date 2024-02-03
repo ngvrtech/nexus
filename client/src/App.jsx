@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./components/Login";
 import FieldHome from "./components/FieldHome";
+import FieldOptions from "./components/FieldOptions";
 import "./scss/styles.scss";
 // import * as bootstrap from "bootstrap";
 
@@ -13,7 +14,8 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/field/home" element={<FieldHome />} />
+            <Route path="/field/" element={<FieldHome />} />
+            <Route path="/field/:id" element={<FieldOptions />} />
           </Routes>
         </BrowserRouter>
       </div>

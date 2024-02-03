@@ -43,7 +43,12 @@ const Login = () => {
               />
               <label htmlFor="password">Password</label>
             </div>
-            <button className="btn btn-primary">Login</button>
+            <button
+              className="btn btn-primary mt-3"
+              style={{ width: "10rem", background: "#293A8E" }}
+            >
+              Login
+            </button>
           </form>
         </div>
       </div>
