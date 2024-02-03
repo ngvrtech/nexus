@@ -23,23 +23,49 @@ const FieldInventory = () => {
   const [showModal, setShowModal] = useState(false);
   const [notesValue, setNotesValue] = useState({});
 
+  const [submitStatus, setSubmitStatus] = useState(false);
+  const [saveNoteStatus, setSaveNotesStatus] = useState(false);
+  const [saveStatus, setSaveStatus] = useState(true);
+  const [photos, setPhotos] = useState([]);
+  const [comments, setComments] = useState("");
+
   const handleShow = (name, notes) => {
     setNotesValue({ name: name, notes: notes });
     setShowModal(true);
+    setSaveNotesStatus(false);
   };
   const handleClose = () => setShowModal(false);
 
-  const handleClear = () => setNotesValue({ ...notesValue, notes: "" });
+  const handleClear = () => {
+    setNotesValue({ ...notesValue, notes: "" });
+    setSaveNotesStatus(true);
+  };
+
+  const handleSave = () => setSaveStatus(false);
 
   const handleNotesValue = (e) => {
     setNotesValue({ ...notesValue, notes: e.target.value });
+    setSaveNotesStatus(true);
   };
 
-  const handleSubmit = (name, notes) => {
+  const handlePhotos = () => {
+    setSaveStatus(true);
+  };
+
+  const handleComments = (e) => {
+    setComments(e.target.value);
+    setSaveStatus(true);
+  };
+
+  const confirmDelete = () =>
+    window.confirm("Are you sure you want to delete this service?");
+
+  const handleSaveChanges = (name, notes) => {
     const updatedInventory = inventory.map((item) =>
       item.name === name ? { ...item, notes: notes } : item
     );
     setInventory(updatedInventory);
+    setSaveStatus(true);
     handleClose();
   };
 
@@ -68,6 +94,12 @@ const FieldInventory = () => {
       item.name === name ? { ...item, status: getNextStatus(status) } : item
     );
     setInventory(updatedInventory);
+
+    const filtered = updatedInventory.filter((item) => {
+      return item.status === "Check";
+    });
+    setSubmitStatus(filtered.length < 1 ? true : false);
+    setSaveStatus(true);
   };
 
   return (
@@ -88,6 +120,7 @@ const FieldInventory = () => {
               </h1>
             </div>
           </div>
+
           <div className="mb-4">
             <span className="alert alert-secondary m-1 p-2 border-0">
               Check
@@ -106,7 +139,7 @@ const FieldInventory = () => {
                 return (
                   <div
                     className={`alert ${getAlertClass(item.status)} m-3 p-2`}
-                    key={item.id}
+                    key={item.name}
                     style={{ width: "20rem" }}
                   >
                     <div className="row">
@@ -144,7 +177,7 @@ const FieldInventory = () => {
             <form>
               <div className="my-3">
                 <label htmlFor="formFileMultiple" className="form-label">
-                  <b>Upload Picture(s)</b>
+                  <b>Upload Photo(s)</b>
                 </label>
                 <input
                   multiple
@@ -152,6 +185,7 @@ const FieldInventory = () => {
                   type="file"
                   id="formFileMultiple"
                   style={{ width: "20rem" }}
+                  onChange={handlePhotos}
                 />
               </div>
               <div className="form-floating my-3">
@@ -161,25 +195,66 @@ const FieldInventory = () => {
                   id="comments"
                   className="form-control align-top"
                   style={{ width: "20rem", height: "9rem" }}
+                  onChange={handleComments}
+                  value={comments}
                 />
                 <label>Comments</label>
               </div>
             </form>
           </div>
           <div>
-            <button className="btn btn-success mb-2" style={{ width: "20rem" }}>
-              Submit
-            </button>
+            {submitStatus ? (
+              <button
+                className="btn btn-success mb-2"
+                style={{ width: "20rem" }}
+                //   onClick={}
+              >
+                Submit
+              </button>
+            ) : (
+              <button
+                className="btn btn-success mb-2 disabled "
+                style={{ width: "20rem" }}
+              >
+                Submit
+              </button>
+            )}
           </div>
           <div>
-            <button className="btn btn-primary mb-2" style={{ width: "20rem" }}>
-              Save
-            </button>
+            {saveStatus ? (
+              <button
+                className="btn btn-primary mb-2"
+                style={{ width: "20rem" }}
+                onClick={handleSave}
+              >
+                Save
+              </button>
+            ) : (
+              <button
+                className="btn btn-primary mb-2 disabled"
+                style={{ width: "20rem" }}
+              >
+                Save
+              </button>
+            )}
           </div>
           <div>
-            <button className="btn btn-danger mb-5" style={{ width: "20rem" }}>
+            <button
+              className="btn btn-danger mb-5"
+              style={{ width: "20rem" }}
+              onClick={confirmDelete}
+            >
               Delete
             </button>
+            {/* <div className="alert alert-danger">
+              Are you sure you want to delete this service? This action cannot
+              be undone.
+              <div>
+                <a href="#" className="alert-link">
+                  Yes, Delete.
+                </a>
+              </div>
+            </div> */}
           </div>
           <div className="mt-5 mb-4">
             <img className="rounded-circle" height="35px" src={user.avatar} />
@@ -228,8 +303,12 @@ const FieldInventory = () => {
                     </button>
                     <button
                       type="button"
-                      className="btn btn-primary btn-sm"
-                      onClick={handleSubmit.bind(
+                      className={
+                        saveNoteStatus
+                          ? `btn btn-primary btn-sm`
+                          : `btn btn-primary btn-sm disabled`
+                      }
+                      onClick={handleSaveChanges.bind(
                         null,
                         notesValue.name,
                         notesValue.notes
