@@ -1,8 +1,10 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import axios from "axios";
 
 const FieldCleaningChecklist = () => {
+  const propertyID = useParams();
   const [user, setUser] = useState({
     name: "Housekeeper1",
     avatar: "https://i.pravatar.cc/300",
@@ -11,16 +13,8 @@ const FieldCleaningChecklist = () => {
     address: "123 Main Street",
     image: "https://placehold.co/600x400",
   });
-  const [cleaningChecklist, setCleaningChecklist] = useState([
-    { name: "Dishwasher started", room: "First Steps", status: false },
-    { name: "Laundry started", room: "First Steps", status: false },
-    { name: "Toilet sanitized", room: "Bathrooms", status: false },
-    { name: "Shower/Tub cleaned", room: "Bathrooms", status: false },
-    { name: "Surfaces wiped", room: "Bathrooms", status: false },
-    { name: "Fridge cleaned", room: "Kitchen", status: false },
-    { name: "Dishes checked", room: "Kitchen", status: false },
-    { name: "Supplies available", room: "Kitchen", status: false },
-  ]);
+  const [cleaningChecklist, setCleaningChecklist] = useState([]);
+
   const [certifiedChecklist, setCertifiedChecklist] = useState([
     { name: "Furniture in their correct location.", status: false },
     { name: "Everything appears presentable.", status: false },
@@ -45,7 +39,19 @@ const FieldCleaningChecklist = () => {
     status: false,
     notes: "",
   });
-  //   const [certified, setCertified] = useState([false, false, false]);
+
+  const fetchProperty = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/v1/properties/${propertyID.id}`
+      );
+      console.log(response.data.property);
+      setProperty(response.data.property);
+      setCleaningChecklist(response.data.property.cleaningChecklist);
+    } catch (err) {
+      console.log(err.response || err.request || err.message);
+    }
+  };
 
   const handleSave = () => {
     setSaveStatus(false);
@@ -123,6 +129,10 @@ const FieldCleaningChecklist = () => {
     setCertifiedChecklistStatus(filtered.length < 1 ? true : false);
     setSaveStatus(true);
   };
+
+  useEffect(() => {
+    fetchProperty();
+  }, []);
 
   return (
     <div className="container-fluid vh-100 d-flex justify-content-center mt-4">
