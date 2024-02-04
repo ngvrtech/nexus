@@ -1,5 +1,6 @@
-import { useState } from "react";
-// import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useState } from "react";
+// import axios from "axios";
+import { Link } from "react-router-dom";
 
 const FieldHome = () => {
   const [user, setUser] = useState({
@@ -8,11 +9,27 @@ const FieldHome = () => {
   });
   const [searchInput, setSearchInput] = useState("");
   const [properties, setProperties] = useState([
-    { address: "123 Main Street", image: "https://placehold.co/600x400" },
-    { address: "456 Church Street", image: "https://placehold.co/600x400" },
-    { address: "88 Oak Lane", image: "https://placehold.co/600x400" },
-    { address: "22 Franklin Road", image: "https://placehold.co/600x400" },
-    { address: "11 Possum Ridge", image: "https://placehold.co/600x400" },
+    {
+      _id: 1,
+      address: "123 Main Street",
+      image: "https://placehold.co/600x400",
+    },
+    {
+      _id: 2,
+      address: "456 Church Street",
+      image: "https://placehold.co/600x400",
+    },
+    { _id: 3, address: "88 Oak Lane", image: "https://placehold.co/600x400" },
+    {
+      _id: 4,
+      address: "22 Franklin Road",
+      image: "https://placehold.co/600x400",
+    },
+    {
+      _id: 5,
+      address: "11 Possum Ridge",
+      image: "https://placehold.co/600x400",
+    },
   ]);
   const [filteredProperties, setFilteredProperties] = useState([]);
 
@@ -23,6 +40,33 @@ const FieldHome = () => {
     });
     setFilteredProperties(filtered);
   };
+
+  const renderPropertyCard = (property) => (
+    <div
+      className="card mx-3 mb-4"
+      style={{ width: "20rem" }}
+      key={property.address}
+    >
+      <Link to={`http://localhost:5173/field/${property._id}`}>
+        <img className="card-img-top pt-3" src={property.image} />
+      </Link>
+      <h5 className="card-title m-2">{property.address}</h5>
+    </div>
+  );
+  // useEffect(() => {
+  //   const fetchProperties = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://localhost:5000/api/v1/properties"
+  //       );
+  //       console.log(response.data);
+  //       setProperties([]);
+  //     } catch (err) {
+  //       console.log(err.response || err.request || err.message);
+  //     }
+  //   };
+  //   fetchProperties();
+  // }, []);
 
   return (
     <div className="container-fluid vh-100 d-flex justify-content-center mt-4">
@@ -55,34 +99,10 @@ const FieldHome = () => {
           </form>
           <div className="row p-4">
             {searchInput.length < 1
-              ? properties.map((property) => {
-                  return (
-                    <div
-                      className="card mx-3 mb-4"
-                      style={{ width: "20rem" }}
-                      key={property.id}
-                    >
-                      <img
-                        className="card-img-top pt-3"
-                        // style={{ width: "" }}
-                        src={property.image}
-                      />
-                      <h5 className="card-title m-2">{property.address}</h5>
-                    </div>
-                  );
-                })
-              : filteredProperties.map((property) => {
-                  return (
-                    <div
-                      className="card mx-3 mb-4"
-                      style={{ width: "20rem" }}
-                      key={property.id}
-                    >
-                      <img className="card-img-top" src={property.image} />
-                      <h5 className="card-title m-2">{property.address}</h5>
-                    </div>
-                  );
-                })}
+              ? properties.map((property) => renderPropertyCard(property))
+              : filteredProperties.map((property) =>
+                  renderPropertyCard(property)
+                )}
           </div>
           <div className="mt-5 mb-4">
             <img className="rounded-circle" height="35px" src={user.avatar} />

@@ -25,7 +25,7 @@ const FieldInventory = () => {
 
   const [submitStatus, setSubmitStatus] = useState(false);
   const [saveNoteStatus, setSaveNotesStatus] = useState(false);
-  const [saveStatus, setSaveStatus] = useState(true);
+  const [saveStatus, setSaveStatus] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [comments, setComments] = useState("");
 
@@ -120,7 +120,6 @@ const FieldInventory = () => {
               </h1>
             </div>
           </div>
-
           <div className="mb-4">
             <span className="alert alert-secondary m-1 p-2 border-0">
               Check
