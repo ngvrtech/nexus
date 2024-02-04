@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import axios from "axios";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 const FieldHome = () => {
@@ -53,20 +53,19 @@ const FieldHome = () => {
       <h5 className="card-title m-2">{property.address}</h5>
     </div>
   );
-  // useEffect(() => {
-  //   const fetchProperties = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "http://localhost:5000/api/v1/properties"
-  //       );
-  //       console.log(response.data);
-  //       setProperties([]);
-  //     } catch (err) {
-  //       console.log(err.response || err.request || err.message);
-  //     }
-  //   };
-  //   fetchProperties();
-  // }, []);
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/v1/properties"
+        );
+        setProperties(response.data.properties);
+      } catch (err) {
+        console.log(err.response || err.request || err.message);
+      }
+    };
+    fetchProperties();
+  }, []);
 
   return (
     <div className="container-fluid vh-100 d-flex justify-content-center mt-4">

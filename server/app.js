@@ -2,7 +2,10 @@ require('dotenv').config();
 require('express-async-errors');
 
 const express = require('express');
+const cors = require('cors');
+
 const app = express();
+app.use(cors());
 
 const users = require('./routes/users');
 const properties = require('./routes/properties');

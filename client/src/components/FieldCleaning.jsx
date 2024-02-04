@@ -49,11 +49,6 @@ const FieldCleaningChecklist = () => {
 
   const handleSave = () => {
     setSaveStatus(false);
-    console.log(
-      cleaningChecklistStatus,
-      reportsStatus,
-      certifiedChecklistStatus
-    );
   };
 
   const handlePhotos = () => {
@@ -122,11 +117,9 @@ const FieldCleaningChecklist = () => {
       task.name === name ? { ...task, status: getNextStatus(status) } : task
     );
     setCertifiedChecklist(updatedCertifiedChecklist);
-    console.log(updatedCertifiedChecklist);
     const filtered = updatedCertifiedChecklist.filter((task) => {
       return task.status === false;
     });
-    // console.log(allTrue);
     setCertifiedChecklistStatus(filtered.length < 1 ? true : false);
     setSaveStatus(true);
   };
