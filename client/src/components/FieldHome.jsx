@@ -8,29 +8,7 @@ const FieldHome = () => {
     avatar: "https://i.pravatar.cc/300",
   });
   const [searchInput, setSearchInput] = useState("");
-  const [properties, setProperties] = useState([
-    {
-      _id: 1,
-      address: "123 Main Street",
-      image: "https://placehold.co/600x400",
-    },
-    {
-      _id: 2,
-      address: "456 Church Street",
-      image: "https://placehold.co/600x400",
-    },
-    { _id: 3, address: "88 Oak Lane", image: "https://placehold.co/600x400" },
-    {
-      _id: 4,
-      address: "22 Franklin Road",
-      image: "https://placehold.co/600x400",
-    },
-    {
-      _id: 5,
-      address: "11 Possum Ridge",
-      image: "https://placehold.co/600x400",
-    },
-  ]);
+  const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
 
   const searchItems = (e) => {
