@@ -12,32 +12,66 @@ const FieldCleaningChecklist = () => {
     image: "https://placehold.co/600x400",
   });
   const [cleaningChecklist, setCleaningChecklist] = useState([
-    { name: "Dishwasher started", room: "First Steps", status: "Incomplete" },
-    { name: "Laundry started", room: "First Steps", status: "Incomplete" },
-    { name: "Toilet sanitized", room: "Bathrooms", status: "Incomplete" },
-    { name: "Shower/Tub cleaned", room: "Bathrooms", status: "Incomplete" },
-    { name: "Surfaces wiped", room: "Bathrooms", status: "Incomplete" },
-    { name: "Fridge cleaned", room: "Kitchen", status: "Incomplete" },
-    { name: "Dishes checked", room: "Kitchen", status: "Incomplete" },
-    { name: "Supplies available", room: "Kitchen", status: "Incomplete" },
+    { name: "Dishwasher started", room: "First Steps", status: false },
+    { name: "Laundry started", room: "First Steps", status: false },
+    { name: "Toilet sanitized", room: "Bathrooms", status: false },
+    { name: "Shower/Tub cleaned", room: "Bathrooms", status: false },
+    { name: "Surfaces wiped", room: "Bathrooms", status: false },
+    { name: "Fridge cleaned", room: "Kitchen", status: false },
+    { name: "Dishes checked", room: "Kitchen", status: false },
+    { name: "Supplies available", room: "Kitchen", status: false },
   ]);
-
-  const [submitStatus, setSubmitStatus] = useState(false);
+  const [certifiedChecklist, setCertifiedChecklist] = useState([
+    { name: "Furniture in their correct location.", status: false },
+    { name: "Everything appears presentable.", status: false },
+    { name: "The house is ready for guests.", status: false },
+  ]);
+  const [cleaningChecklistStatus, setCleaningChecklistStatus] = useState(false);
+  const [certifiedChecklistStatus, setCertifiedChecklistStatus] =
+    useState(false);
+  const [reports, setReports] = useState({
+    missingStatus: false,
+    damagesStatus: false,
+  });
+  const [reportsStatus, setReportsStatus] = useState(false);
   const [saveStatus, setSaveStatus] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [comments, setComments] = useState("");
   const [missingItems, setMissingItems] = useState({
-    missing: false,
+    status: false,
     notes: "",
   });
   const [damaged, setDamaged] = useState({
-    damaged: false,
+    status: false,
     notes: "",
   });
+  //   const [certified, setCertified] = useState([false, false, false]);
 
-  const handleSave = () => setSaveStatus(false);
+  const handleSave = () => {
+    setSaveStatus(false);
+    console.log(
+      cleaningChecklistStatus,
+      reportsStatus,
+      certifiedChecklistStatus
+    );
+  };
 
   const handlePhotos = () => {
+    setSaveStatus(true);
+  };
+
+  const handleMissingRadio = (e) => {
+    setMissingItems({ ...missingItems, status: e.target.value });
+    setReports({ missingStatus: true });
+    setReportsStatus(reports.damageStatus === true ? true : false);
+    setSaveStatus(true);
+  };
+
+  const handleDamagedRadio = (e) => {
+    setDamaged({ ...damaged, status: e.target.value });
+    setReports({ damagesStatus: true });
+    setReportsStatus(reports.missingStatus === true ? true : false);
+
     setSaveStatus(true);
   };
 
@@ -56,18 +90,18 @@ const FieldCleaningChecklist = () => {
 
   const getAlertClass = (status) => {
     const classMap = {
-      Incomplete: "alert-secondary",
-      Completed: "alert-success",
+      false: "alert-secondary",
+      true: "alert-success",
     };
     return classMap[status] || "alert-secondary";
   };
 
   const getNextStatus = (currentStatus) => {
     const statusMap = {
-      Incomplete: "Completed",
-      Completed: "Incomplete",
+      false: true,
+      true: false,
     };
-    return statusMap[currentStatus] || "Check";
+    return statusMap[currentStatus] || false;
   };
 
   const handleClick = (name, status) => {
@@ -77,9 +111,23 @@ const FieldCleaningChecklist = () => {
     setCleaningChecklist(updatedCleaningChecklist);
 
     const filtered = updatedCleaningChecklist.filter((task) => {
-      return task.status === "Incomplete";
+      return task.status === false;
     });
-    setSubmitStatus(filtered.length < 1 ? true : false);
+    setCleaningChecklistStatus(filtered.length < 1 ? true : false);
+    setSaveStatus(true);
+  };
+
+  const handleCertifiedClick = (name, status) => {
+    const updatedCertifiedChecklist = certifiedChecklist.map((task) =>
+      task.name === name ? { ...task, status: getNextStatus(status) } : task
+    );
+    setCertifiedChecklist(updatedCertifiedChecklist);
+    console.log(updatedCertifiedChecklist);
+    const filtered = updatedCertifiedChecklist.filter((task) => {
+      return task.status === false;
+    });
+    // console.log(allTrue);
+    setCertifiedChecklistStatus(filtered.length < 1 ? true : false);
     setSaveStatus(true);
   };
 
@@ -128,7 +176,9 @@ const FieldCleaningChecklist = () => {
             <form>
               {/* Missing Items Report */}
               <div
-                className={`alert alert-secondary m-3 p-2`}
+                className={`alert ${
+                  missingItems.status ? "alert-success" : "alert-secondary"
+                } m-3 p-2`}
                 style={{ width: "20rem" }}
               >
                 <h5>Are there items missing?</h5>
@@ -138,7 +188,8 @@ const FieldCleaningChecklist = () => {
                     type="radio"
                     name="inlineRadioOptions"
                     id="inlineRadio1"
-                    value="option1"
+                    value="false"
+                    onChange={handleMissingRadio}
                   />
                   <label className="form-check-label" htmlFor="inlineRadio1">
                     No
@@ -150,7 +201,8 @@ const FieldCleaningChecklist = () => {
                     type="radio"
                     name="inlineRadioOptions"
                     id="inlineRadio2"
-                    value="option2"
+                    value="true"
+                    onChange={handleMissingRadio}
                   />
                   <label className="form-check-label" htmlFor="inlineRadio2">
                     Yes
@@ -171,7 +223,9 @@ const FieldCleaningChecklist = () => {
               </div>
               {/* Damages Report */}
               <div
-                className={`alert alert-secondary m-3 p-2`}
+                className={`alert ${
+                  damaged.status ? "alert-success" : "alert-secondary"
+                } m-3 p-2`}
                 style={{ width: "20rem" }}
               >
                 <h5>Is anything damaged?</h5>
@@ -181,7 +235,8 @@ const FieldCleaningChecklist = () => {
                     type="radio"
                     name="damageRadioOptions"
                     id="inlineRadio1"
-                    value="no"
+                    value="false"
+                    onChange={handleDamagedRadio}
                   />
                   <label className="form-check-label" htmlFor="inlineRadio1">
                     No
@@ -193,7 +248,8 @@ const FieldCleaningChecklist = () => {
                     type="radio"
                     name="damageRadioOptions"
                     id="inlineRadio2"
-                    value="yes"
+                    value="true"
+                    onChange={handleDamagedRadio}
                   />
                   <label className="form-check-label" htmlFor="inlineRadio2">
                     Yes
@@ -242,8 +298,39 @@ const FieldCleaningChecklist = () => {
               </div>
             </form>
           </div>
+          {/* Certified Checklist */}
+          <div className="d-flex justify-content-center">
+            <div className="col-11">
+              {certifiedChecklist.map((task) => {
+                return (
+                  <div
+                    className={`alert ${getAlertClass(task.status)} m-3 p-2`}
+                    key={task.name}
+                    style={{ width: "20rem" }}
+                  >
+                    <div className="row">
+                      <div
+                        className="col d-flex justify-content-start mx-4"
+                        role="button"
+                        onClick={handleCertifiedClick.bind(
+                          null,
+                          task.name,
+                          task.status
+                        )}
+                      >
+                        {task.name}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          {/* Bottom Buttons */}
           <div>
-            {submitStatus ? (
+            {cleaningChecklistStatus &&
+            reportsStatus &&
+            certifiedChecklistStatus ? (
               <button
                 className="btn btn-success mb-2"
                 style={{ width: "20rem" }}
