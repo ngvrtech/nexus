@@ -18,8 +18,14 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/field/" element={<FieldHome />} />
             <Route path="/field/:id" element={<FieldOptions />} />
-            <Route path="/field/:id/inventory" element={<FieldInventory />} />
-            <Route path="/field/:id/cleaning" element={<FieldCleaning />} />
+            <Route
+              path="/field/:propertyID/inventory/:recordID"
+              element={<FieldInventory />}
+            />
+            <Route
+              path="/field/:propertyID/cleaning/:recordID"
+              element={<FieldCleaning />}
+            />
           </Routes>
         </BrowserRouter>
       </div>

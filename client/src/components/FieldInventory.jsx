@@ -243,7 +243,7 @@ const FieldInventory = () => {
               style={{ width: "20rem" }}
               onClick={confirmDelete}
             >
-              Delete
+              Cancel
             </button>
             {/* <div className="alert alert-danger">
               Are you sure you want to delete this service? This action cannot
