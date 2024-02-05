@@ -1,37 +1,36 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const FieldCleaningChecklist = () => {
-  const { propertyID, recordID } = useParams();
-  const navigate = useNavigate();
+  // Authenticated user information - ATTENTION needed
   const [user, setUser] = useState({
-    name: "Housekeeper1",
+    name: "hkim",
     avatar: "https://i.pravatar.cc/300",
   });
-  const [property, setProperty] = useState({
-    address: "123 Main Street",
-    image: "https://placehold.co/600x400",
-  });
-  const [cleaningChecklist, setCleaningChecklist] = useState([]);
 
+  // Stores state of selected property
+  const [property, setProperty] = useState({});
+
+  // Stores state of cleaning checklist and status for submit button logic
+  const [cleaningChecklist, setCleaningChecklist] = useState([]);
+  const [cleaningChecklistStatus, setCleaningChecklistStatus] = useState(false);
+
+  // Stores certified tasks and status for submit button logic
   const [certifiedChecklist, setCertifiedChecklist] = useState([
     { name: "Furniture in their correct location.", status: false },
     { name: "Everything appears presentable.", status: false },
     { name: "The house is ready for guests.", status: false },
   ]);
-  const [cleaningChecklistStatus, setCleaningChecklistStatus] = useState(false);
   const [certifiedChecklistStatus, setCertifiedChecklistStatus] =
     useState(false);
-  const [reports, setReports] = useState({
-    missingStatus: false,
-    damagesStatus: false,
-  });
+
+  // Stores reports and status for submit button logic
+  const [reports, setReports] = useState({});
   const [reportsStatus, setReportsStatus] = useState(false);
-  const [saveStatus, setSaveStatus] = useState(false);
-  const [photos, setPhotos] = useState([]);
-  const [comments, setComments] = useState("");
+
+  // Stores status and notes for missing items and damages
   const [missingItems, setMissingItems] = useState({
     status: null,
     notes: "",
@@ -41,6 +40,19 @@ const FieldCleaningChecklist = () => {
     notes: "",
   });
 
+  // Stores text in comments section
+  const [comments, setComments] = useState("");
+
+  // Handles requirements met function to display save button
+  const [saveStatus, setSaveStatus] = useState(false);
+
+  // State holds URLs for uploaded photos
+  // const [photos, setPhotos] = useState([]);
+
+  const { propertyID, recordID } = useParams();
+  const navigate = useNavigate();
+
+  // Function to fetch data for selected property
   const fetchProperty = async () => {
     try {
       const response = await axios.get(
@@ -53,6 +65,91 @@ const FieldCleaningChecklist = () => {
     }
   };
 
+  // Fetches property data on page load
+  useEffect(() => {
+    fetchProperty();
+  }, []);
+
+  // Supporting functions to change task color/status
+  const getAlertClass = (status) => {
+    const classMap = {
+      false: "alert-secondary",
+      true: "alert-success",
+    };
+    return classMap[status] || "alert-secondary";
+  };
+  const getNextStatus = (currentStatus) => {
+    const statusMap = {
+      false: true,
+      true: false,
+    };
+    return statusMap[currentStatus] || false;
+  };
+
+  // Logic to "check off" a cleaning task
+  const handleClick = (name, status) => {
+    const updatedCleaningChecklist = cleaningChecklist.map((task) =>
+      task.name === name ? { ...task, status: getNextStatus(status) } : task
+    );
+    setCleaningChecklist(updatedCleaningChecklist);
+
+    // Logic for submit and save buttons
+    const filtered = updatedCleaningChecklist.filter((task) => {
+      return task.status === false;
+    });
+    setCleaningChecklistStatus(filtered.length < 1 ? true : false);
+    setSaveStatus(true);
+  };
+
+  // Function to handle photos upload feature - ATTENTION NEEDED
+  const handlePhotos = () => {
+    setSaveStatus(true);
+  };
+
+  // Logic for missing items radio and comments
+  const handleMissingItemsRadio = (e) => {
+    setMissingItems({ ...missingItems, status: e.target.value });
+    setReports({ missingStatus: true });
+    setReportsStatus(reports.damageStatus);
+    setSaveStatus(true);
+  };
+  const handleMissingItems = (e) => {
+    setMissingItems({ ...missingItems, notes: e.target.value });
+    setSaveStatus(true);
+  };
+
+  // Logic for damaged radio and comments
+  const handleDamagedRadio = (e) => {
+    setDamaged({ ...damaged, status: e.target.value });
+    setReports({ damagesStatus: true });
+    setReportsStatus(reports.missingStatus);
+    setSaveStatus(true);
+  };
+  const handleDamaged = (e) => {
+    setDamaged({ ...damaged, notes: e.target.value });
+    setSaveStatus(true);
+  };
+
+  // Sets comments and changes save status
+  const handleComments = (e) => {
+    setComments(e.target.value);
+    setSaveStatus(true);
+  };
+
+  // Logic requiring all certified requirements met
+  const handleCertifiedClick = (name, status) => {
+    const updatedCertifiedChecklist = certifiedChecklist.map((task) =>
+      task.name === name ? { ...task, status: getNextStatus(status) } : task
+    );
+    setCertifiedChecklist(updatedCertifiedChecklist);
+    const filtered = updatedCertifiedChecklist.filter((task) => {
+      return task.status === false;
+    });
+    setCertifiedChecklistStatus(filtered.length < 1 ? true : false);
+    setSaveStatus(true);
+  };
+
+  // Logic for Submit button
   const handleSubmit = async () => {
     const checklists = { checklistData: [cleaningChecklist] };
     const reports = {
@@ -85,6 +182,7 @@ const FieldCleaningChecklist = () => {
     navigate(`/field/${propertyID}`, { replace: true });
   };
 
+  // Logic for Save button
   const handleSave = async (e) => {
     e.preventDefault();
     const checklists = { checklistData: [cleaningChecklist] };
@@ -105,48 +203,14 @@ const FieldCleaningChecklist = () => {
         `http://localhost:5000/api/v1/records/${recordID}`,
         updatedChecklist
       );
-      console.log(response.data);
+      console.log(response.data.record);
     } catch (err) {
       console.log(err.response || err.request || err.message);
     }
-
     setSaveStatus(false);
   };
 
-  const handlePhotos = () => {
-    setSaveStatus(true);
-  };
-
-  const handleMissingRadio = (e) => {
-    setMissingItems({ ...missingItems, status: e.target.value });
-    setReports({ missingStatus: true });
-    setReportsStatus(reports.damageStatus === true ? true : false);
-    setSaveStatus(true);
-  };
-
-  const handleDamagedRadio = (e) => {
-    setDamaged({ ...damaged, status: e.target.value });
-    setReports({ damagesStatus: true });
-    setReportsStatus(reports.missingStatus === true ? true : false);
-
-    setSaveStatus(true);
-  };
-
-  const handleMissingItems = (e) => {
-    setMissingItems({ ...missingItems, notes: e.target.value });
-    setSaveStatus(true);
-  };
-
-  const handleDamaged = (e) => {
-    setDamaged({ ...damaged, notes: e.target.value });
-    setSaveStatus(true);
-  };
-
-  const handleComments = (e) => {
-    setComments(e.target.value);
-    setSaveStatus(true);
-  };
-
+  // Logic for Cancel button
   const handleCancel = async () => {
     const shouldCancel = window.confirm(
       "Are you sure you want to cancel this service?"
@@ -166,51 +230,6 @@ const FieldCleaningChecklist = () => {
     }
   };
 
-  const getAlertClass = (status) => {
-    const classMap = {
-      false: "alert-secondary",
-      true: "alert-success",
-    };
-    return classMap[status] || "alert-secondary";
-  };
-
-  const getNextStatus = (currentStatus) => {
-    const statusMap = {
-      false: true,
-      true: false,
-    };
-    return statusMap[currentStatus] || false;
-  };
-
-  const handleClick = (name, status) => {
-    const updatedCleaningChecklist = cleaningChecklist.map((task) =>
-      task.name === name ? { ...task, status: getNextStatus(status) } : task
-    );
-    setCleaningChecklist(updatedCleaningChecklist);
-
-    const filtered = updatedCleaningChecklist.filter((task) => {
-      return task.status === false;
-    });
-    setCleaningChecklistStatus(filtered.length < 1 ? true : false);
-    setSaveStatus(true);
-  };
-
-  const handleCertifiedClick = (name, status) => {
-    const updatedCertifiedChecklist = certifiedChecklist.map((task) =>
-      task.name === name ? { ...task, status: getNextStatus(status) } : task
-    );
-    setCertifiedChecklist(updatedCertifiedChecklist);
-    const filtered = updatedCertifiedChecklist.filter((task) => {
-      return task.status === false;
-    });
-    setCertifiedChecklistStatus(filtered.length < 1 ? true : false);
-    setSaveStatus(true);
-  };
-
-  useEffect(() => {
-    fetchProperty();
-  }, []);
-
   return (
     <div className="container-fluid vh-100 d-flex justify-content-center mt-4">
       <div className="row">
@@ -220,7 +239,6 @@ const FieldCleaningChecklist = () => {
               <img style={{ width: "10rem" }} src="/ngvr-logo.png" />
             </Link>
           </div>
-
           <div className="row p-4">
             <div className="card mx-3" style={{ width: "20rem" }}>
               <div className="mt-2">{property.address}</div>
@@ -231,6 +249,7 @@ const FieldCleaningChecklist = () => {
           </div>
           <div className="d-flex justify-content-center">
             <div className="col-11">
+              {/* Displays all cleaning tasks with click functionality */}
               {cleaningChecklist.map((task) => {
                 return (
                   <div
@@ -254,7 +273,7 @@ const FieldCleaningChecklist = () => {
           </div>
           <div className="d-flex justify-content-center">
             <form>
-              {/* Missing Items Report */}
+              {/* Missing items report */}
               <div
                 className={`alert ${
                   missingItems.status ? "alert-success" : "alert-secondary"
@@ -269,7 +288,7 @@ const FieldCleaningChecklist = () => {
                     name="inlineRadioOptions"
                     id="inlineRadio1"
                     value="false"
-                    onChange={handleMissingRadio}
+                    onChange={handleMissingItemsRadio}
                   />
                   <label className="form-check-label" htmlFor="inlineRadio1">
                     No
@@ -282,7 +301,7 @@ const FieldCleaningChecklist = () => {
                     name="inlineRadioOptions"
                     id="inlineRadio2"
                     value="true"
-                    onChange={handleMissingRadio}
+                    onChange={handleMissingItemsRadio}
                   />
                   <label className="form-check-label" htmlFor="inlineRadio2">
                     Yes
@@ -301,7 +320,7 @@ const FieldCleaningChecklist = () => {
                 />
                 <label>Notes for Missing Items</label>
               </div>
-              {/* Damages Report */}
+              {/* Damages report */}
               <div
                 className={`alert ${
                   damaged.status ? "alert-success" : "alert-secondary"
@@ -336,7 +355,6 @@ const FieldCleaningChecklist = () => {
                   </label>
                 </div>
               </div>
-
               <div className="form-floating my-3">
                 <textarea
                   placeholder="Missing Items"
@@ -406,8 +424,8 @@ const FieldCleaningChecklist = () => {
               })}
             </div>
           </div>
-          {/* Bottom Buttons */}
           <div>
+            {/* Submit button with enabled logic */}
             {cleaningChecklistStatus &&
             reportsStatus &&
             certifiedChecklistStatus ? (
@@ -428,6 +446,7 @@ const FieldCleaningChecklist = () => {
             )}
           </div>
           <div>
+            {/* Save button with enabled logic */}
             {saveStatus ? (
               <button
                 className="btn btn-primary mb-2"
@@ -446,6 +465,7 @@ const FieldCleaningChecklist = () => {
             )}
           </div>
           <div>
+            {/* Cancel button with confirm popup */}
             <button
               className="btn btn-danger mb-5"
               style={{ width: "20rem" }}
@@ -453,16 +473,8 @@ const FieldCleaningChecklist = () => {
             >
               Cancel
             </button>
-            {/* <div className="alert alert-danger">
-              Are you sure you want to delete this service? This action cannot
-              be undone.
-              <div>
-                <a href="#" className="alert-link">
-                  Yes, Delete.
-                </a>
-              </div>
-            </div> */}
           </div>
+          {/* User information and logout button */}
           <div className="mt-5 mb-4">
             <img className="rounded-circle" height="35px" src={user.avatar} />
             <span className="m-3">{user.name}</span>

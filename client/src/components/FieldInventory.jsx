@@ -3,14 +3,19 @@ import { Link } from "react-router-dom";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 const FieldInventory = () => {
+  // Authenticated user information - ATTENTION needed
   const [user, setUser] = useState({
     name: "Housekeeper1",
     avatar: "https://i.pravatar.cc/300",
   });
+
+  // Stores state of selected property - Dummy data
   const [property, setProperty] = useState({
     address: "123 Main Street",
     image: "https://placehold.co/600x400",
   });
+
+  // Stores list of inventory items - Dummy data
   const [inventory, setInventory] = useState([
     { name: "Ant Poison", status: "Check", notes: "aaa" },
     { name: "Bar Soap", status: "Check", notes: "" },
@@ -20,55 +25,25 @@ const FieldInventory = () => {
     { name: "Dryer Balls", status: "Check", notes: "" },
     { name: "Lightbulbs", status: "Check", notes: "" },
   ]);
+
+  // Stores visible status and notes in modal
   const [showModal, setShowModal] = useState(false);
   const [notesValue, setNotesValue] = useState({});
 
-  const [submitStatus, setSubmitStatus] = useState(false);
+  // Stores status of save button in notes modal
   const [saveNoteStatus, setSaveNotesStatus] = useState(false);
+
+  // Stores status to enable/disable submit and save buttons
+  const [submitStatus, setSubmitStatus] = useState(false);
   const [saveStatus, setSaveStatus] = useState(false);
-  const [photos, setPhotos] = useState([]);
+
+  // State holds URLs for uploaded photos
+  // const [photos, setPhotos] = useState([]);
+
+  // Stores text in comments section
   const [comments, setComments] = useState("");
 
-  const handleShow = (name, notes) => {
-    setNotesValue({ name: name, notes: notes });
-    setShowModal(true);
-    setSaveNotesStatus(false);
-  };
-  const handleClose = () => setShowModal(false);
-
-  const handleClear = () => {
-    setNotesValue({ ...notesValue, notes: "" });
-    setSaveNotesStatus(true);
-  };
-
-  const handleSave = () => setSaveStatus(false);
-
-  const handleNotesValue = (e) => {
-    setNotesValue({ ...notesValue, notes: e.target.value });
-    setSaveNotesStatus(true);
-  };
-
-  const handlePhotos = () => {
-    setSaveStatus(true);
-  };
-
-  const handleComments = (e) => {
-    setComments(e.target.value);
-    setSaveStatus(true);
-  };
-
-  const confirmDelete = () =>
-    window.confirm("Are you sure you want to delete this service?");
-
-  const handleSaveChanges = (name, notes) => {
-    const updatedInventory = inventory.map((item) =>
-      item.name === name ? { ...item, notes: notes } : item
-    );
-    setInventory(updatedInventory);
-    setSaveStatus(true);
-    handleClose();
-  };
-
+  // Supporting functions to change task color/status
   const getAlertClass = (status) => {
     const classMap = {
       Check: "alert-secondary",
@@ -78,7 +53,6 @@ const FieldInventory = () => {
     };
     return classMap[status] || "alert-secondary";
   };
-
   const getNextStatus = (currentStatus) => {
     const statusMap = {
       Check: "Present",
@@ -89,18 +63,62 @@ const FieldInventory = () => {
     return statusMap[currentStatus] || "Check";
   };
 
+  // Logic to "check off" or change status of an inventory item
   const handleClick = (name, status) => {
     const updatedInventory = inventory.map((item) =>
       item.name === name ? { ...item, status: getNextStatus(status) } : item
     );
     setInventory(updatedInventory);
 
+    // Logic for submit and save buttons
     const filtered = updatedInventory.filter((item) => {
       return item.status === "Check";
     });
-    setSubmitStatus(filtered.length < 1 ? true : false);
+    setSubmitStatus(filtered.length < 1);
     setSaveStatus(true);
   };
+
+  // Logic for Notes modal to show/hide and save/clear
+  const handleShow = (name, notes) => {
+    setNotesValue({ name: name, notes: notes });
+    setShowModal(true);
+    setSaveNotesStatus(false);
+  };
+  const handleNotesValue = (e) => {
+    setNotesValue({ ...notesValue, notes: e.target.value });
+    setSaveNotesStatus(true);
+  };
+  const handleClear = () => {
+    setNotesValue({ ...notesValue, notes: "" });
+    setSaveNotesStatus(true);
+  };
+  const handleSave = () => setSaveStatus(false);
+  const handleClose = () => setShowModal(false);
+
+  // Function to handle photos upload feature - ATTENTION NEEDED
+  const handlePhotos = () => {
+    setSaveStatus(true);
+  };
+
+  // Stores comment input
+  const handleComments = (e) => {
+    setComments(e.target.value);
+    setSaveStatus(true);
+  };
+
+  // Logic for Save button
+  const handleSaveChanges = (name, notes) => {
+    const updatedInventory = inventory.map((item) =>
+      item.name === name ? { ...item, notes: notes } : item
+    );
+    setInventory(updatedInventory);
+    setSaveStatus(true);
+    handleClose();
+  };
+
+  // Logic for Cancel button - ATTENTION NEEDED
+  const confirmCancel = () =>
+    window.confirm("Are you sure you want to cancel this service?");
 
   return (
     <div className="container-fluid vh-100 d-flex justify-content-center mt-4">
@@ -134,6 +152,7 @@ const FieldInventory = () => {
           </div>
           <div className="d-flex justify-content-center">
             <div className="col-11">
+              {/* Displays all inventory items with click functionality and notes */}
               {inventory.map((item) => {
                 return (
                   <div
@@ -174,6 +193,7 @@ const FieldInventory = () => {
           </div>
           <div className="d-flex justify-content-center">
             <form>
+              {/* Photo Upload Input */}
               <div className="my-3">
                 <label htmlFor="formFileMultiple" className="form-label">
                   <b>Upload Photo(s)</b>
@@ -187,6 +207,7 @@ const FieldInventory = () => {
                   onChange={handlePhotos}
                 />
               </div>
+              {/* Comment Textarea */}
               <div className="form-floating my-3">
                 <textarea
                   placeholder="Comments"
@@ -202,11 +223,12 @@ const FieldInventory = () => {
             </form>
           </div>
           <div>
+            {/* Submit button with enabled logic */}
             {submitStatus ? (
               <button
                 className="btn btn-success mb-2"
                 style={{ width: "20rem" }}
-                //   onClick={}
+                //   onClick={} - ATTENTION NEEDED
               >
                 Submit
               </button>
@@ -220,6 +242,7 @@ const FieldInventory = () => {
             )}
           </div>
           <div>
+            {/* Save button with enabled logic */}
             {saveStatus ? (
               <button
                 className="btn btn-primary mb-2"
@@ -238,28 +261,21 @@ const FieldInventory = () => {
             )}
           </div>
           <div>
+            {/* Cancel button - ATTENTION NEEDED */}
             <button
               className="btn btn-danger mb-5"
               style={{ width: "20rem" }}
-              onClick={confirmDelete}
+              onClick={confirmCancel}
             >
               Cancel
             </button>
-            {/* <div className="alert alert-danger">
-              Are you sure you want to delete this service? This action cannot
-              be undone.
-              <div>
-                <a href="#" className="alert-link">
-                  Yes, Delete.
-                </a>
-              </div>
-            </div> */}
           </div>
           <div className="mt-5 mb-4">
             <img className="rounded-circle" height="35px" src={user.avatar} />
             <span className="m-3">{user.name}</span>
             <button className="btn btn-outline-secondary btn-sm">Logout</button>
           </div>
+
           {/* Modal Box */}
           <div>
             <div
@@ -286,6 +302,7 @@ const FieldInventory = () => {
                     </form>
                   </div>
                   <div className="modal-footer">
+                    {/* Close button */}
                     <button
                       type="button"
                       className="btn btn-secondary btn-sm"
@@ -293,6 +310,7 @@ const FieldInventory = () => {
                     >
                       Close
                     </button>
+                    {/* Clear button */}
                     <button
                       type="button"
                       className="btn btn-secondary btn-sm"
@@ -300,6 +318,7 @@ const FieldInventory = () => {
                     >
                       Clear
                     </button>
+                    {/* Save button */}
                     <button
                       type="button"
                       className={
