@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const FieldInventory = () => {
   const [user, setUser] = useState({
@@ -11,14 +12,36 @@ const FieldInventory = () => {
     image: "https://placehold.co/600x400",
   });
   const [inventory, setInventory] = useState([
-    { name: "Ant Poison", status: "Check", notes: "" },
-    { name: "Bar Soap", status: "Present", notes: "" },
-    { name: "Coffee Filters", status: "Need", notes: "" },
-    { name: "Coffee K-Cups", status: "Delivered", notes: "" },
-    { name: "Dish Soap", status: "Check", notes: "" },
-    { name: "Dryer Balls", status: "Need", notes: "" },
-    { name: "Lightbulbs", status: "Present", notes: "" },
+    { name: "Ant Poison", status: "Check", notes: "aaa" },
+    { name: "Bar Soap", status: "Check", notes: "" },
+    { name: "Coffee Filters", status: "Check", notes: "" },
+    { name: "Coffee K-Cups", status: "Check", notes: "" },
+    { name: "Dish Soap", status: "Check", notes: "s" },
+    { name: "Dryer Balls", status: "Check", notes: "" },
+    { name: "Lightbulbs", status: "Check", notes: "" },
   ]);
+  const [showModal, setShowModal] = useState(false);
+  const [notesValue, setNotesValue] = useState({});
+
+  const handleShow = (name, notes) => {
+    setNotesValue({ name: name, notes: notes });
+    setShowModal(true);
+  };
+  const handleClose = () => setShowModal(false);
+
+  const handleClear = () => setNotesValue({ ...notesValue, notes: "" });
+
+  const handleNotesValue = (e) => {
+    setNotesValue({ ...notesValue, notes: e.target.value });
+  };
+
+  const handleSubmit = (name, notes) => {
+    const updatedInventory = inventory.map((item) =>
+      item.name === name ? { ...item, notes: notes } : item
+    );
+    setInventory(updatedInventory);
+    handleClose();
+  };
 
   const getAlertClass = (status) => {
     const classMap = {
@@ -83,12 +106,35 @@ const FieldInventory = () => {
                 return (
                   <div
                     className={`alert ${getAlertClass(item.status)} m-3 p-2`}
-                    role="button"
-                    onClick={handleClick.bind(null, item.name, item.status)}
                     key={item.id}
                     style={{ width: "20rem" }}
                   >
-                    {item.name}
+                    <div className="row">
+                      <div
+                        className="col d-flex justify-content-start mx-4"
+                        role="button"
+                        onClick={handleClick.bind(null, item.name, item.status)}
+                      >
+                        {item.name}
+                      </div>
+                      <div
+                        className="col-1 d-flex justify-content-end mx-2"
+                        role="button"
+                        onClick={handleShow.bind(null, item.name, item.notes)}
+                      >
+                        {item.notes ? (
+                          <i
+                            className="bi bi-sticky-fill"
+                            style={{ color: "#616360" }}
+                          />
+                        ) : (
+                          <i
+                            className="bi bi-sticky"
+                            style={{ color: "#616360" }}
+                          />
+                        )}
+                      </div>
+                    </div>
                   </div>
                 );
               })}
@@ -140,6 +186,66 @@ const FieldInventory = () => {
             <span className="m-3">{user.name}</span>
             <button className="btn btn-outline-secondary btn-sm">Logout</button>
           </div>
+          {/* Modal Box */}
+          <div>
+            <div
+              className={`modal ${showModal ? "show" : ""}`}
+              tabIndex="-1"
+              role="dialog"
+              style={{ display: showModal ? "block" : "none" }}
+            >
+              <div className="modal-dialog" role="document">
+                <div className="modal-content">
+                  <div className="modal-body">
+                    <form>
+                      <div className="form-group">
+                        <label className="m-2">
+                          Add/Edit Notes for {notesValue.name}
+                        </label>
+                        <textarea
+                          className="form-control"
+                          rows="3"
+                          value={notesValue.notes}
+                          onChange={handleNotesValue}
+                        ></textarea>
+                      </div>
+                    </form>
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={handleClose}
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={handleClear}
+                    >
+                      Clear
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={handleSubmit.bind(
+                        null,
+                        notesValue.name,
+                        notesValue.notes
+                      )}
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {showModal && (
+              <div className="modal-backdrop show" onClick={handleClose}></div>
+            )}
+          </div>
+          {/* End Modal */}
         </div>
       </div>
     </div>
