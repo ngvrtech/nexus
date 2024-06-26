@@ -1,5 +1,6 @@
 const Property = require('../models/Property');
 const asyncWrapper = require('../middleware/async');
+const { createCustomError } = require('../errors/custom-error');
 
 const getAllProperties = asyncWrapper(async (req, res) => {
 	const properties = await Property.find({});
@@ -11,20 +12,14 @@ const addProperty = asyncWrapper(async (req, res) => {
 	res.status(201).json({ property });
 });
 
-const getProperty = async (req, res, next) => {
-	try {
-		const { id: propertyID } = req.params;
-		const property = await Property.findOne({ _id: propertyID });
-		if (!property) {
-			const error = newError('Property Not Found');
-			error.status = 404;
-			return next(error);
-		}
-		res.status(200).json({ property });
-	} catch (error) {
-		res.status(500).json({ msg: error });
+const getProperty = asyncWrapper(async (req, res, next) => {
+	const { id: propertyID } = req.params;
+	const property = await Property.findOne({ _id: propertyID });
+	if (!property) {
+		return next(createCustomError(`No property with id: ${propertyID}`, 404));
 	}
-};
+	res.status(200).json({ property });
+});
 
 const editProperty = asyncWrapper(async (req, res) => {
 	const { id: propertyID } = req.params;
@@ -37,7 +32,7 @@ const editProperty = asyncWrapper(async (req, res) => {
 		}
 	);
 	if (!property) {
-		return res.status(404).json({ msg: `No property with id: ${propertyID}` });
+		return next(createCustomError(`No property with id: ${propertyID}`, 404));
 	}
 	res.status(200).json({ property });
 });
@@ -46,7 +41,7 @@ const deleteProperty = asyncWrapper(async (req, res) => {
 	const { id: propertyID } = req.params;
 	const property = await Property.findOneAndDelete({ _id: propertyID });
 	if (!property) {
-		return res.status(404).json({ msg: `No property with id: ${propertyID}` });
+		return next(createCustomError(`No property with id: ${propertyID}`, 404));
 	}
 	res.status(200).json({ property });
 });

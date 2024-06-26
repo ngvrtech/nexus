@@ -10,9 +10,8 @@ const notFound = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
 // middleware
-app.use(express.json()); // for req.body
 app.use(express.static('./public'));
-app.use(errorHandlerMiddleware);
+app.use(express.json()); // for req.body
 
 // routes
 app.use('/api/v1/users', users);
@@ -20,6 +19,7 @@ app.use('/api/v1/properties', properties);
 app.use('/api/v1/lists', lists);
 app.use('/api/v1/records', records);
 app.use(notFound);
+app.use(errorHandlerMiddleware);
 
 const port = 3000;
 
