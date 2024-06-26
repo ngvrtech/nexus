@@ -47,6 +47,10 @@ const RecordSchema = new mongoose.Schema({
   adminNotes: {
     type: String,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 module.exports = mongoose.model("Record", RecordSchema);

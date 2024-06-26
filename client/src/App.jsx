@@ -7,6 +7,7 @@ import FieldOptions from "./components/FieldOptions";
 import FieldInventory from "./components/FieldInventory";
 import FieldCleaning from "./components/FieldCleaning";
 import "./scss/styles.scss";
+import AdminDashboard from "./components/AdminDashboard";
 // import * as bootstrap from "bootstrap";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Login />} />
+            <Route path="/dashboard/" element={<AdminDashboard />} />
             <Route path="/field/" element={<FieldHome />} />
             <Route path="/field/:id" element={<FieldOptions />} />
             <Route

@@ -1,0 +1,534 @@
+{
+	"info": {
+		"_postman_id": "45e6341c-f461-40df-9e55-5dd02b2ff4cb",
+		"name": "NGVR Nexus",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31615224"
+	},
+	"item": [
+		{
+			"name": "Properties",
+			"item": [
+				{
+					"name": "Get All Properties",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/properties",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"properties"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Property",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"address\": \"450 Hound Dog Lane\",\n    \"image\": \"http://henrykimphotography.com/realestate/hound-dog-ln.jpg\",\n    \"cleaningChecklist\": [\n        {\"name\": \"Dishwasher started\", \"rooms\": \"First Steps\", \"status\": false},\n        {\"name\": \"Laundry started\", \"rooms\": \"First Steps\", \"status\": false},\n        {\"name\": \"Toilet sanitized\", \"rooms\": \"Bathrooms\", \"status\": false},\n        {\"name\": \"Shower/Tub cleaned\", \"rooms\": \"Bathrooms\", \"status\": false},\n        {\"name\": \"Surfaces wiped\", \"rooms\": \"Bathrooms\", \"status\": false},\n        {\"name\": \"Fridge cleaned\", \"rooms\": \"Kitchen\", \"status\": false},\n        {\"name\": \"Dishes checked\", \"rooms\": \"Kitchen\", \"status\": false},\n        {\"name\": \"Supplies available\", \"rooms\": \"Kitchen\", \"status\": false}\n    ],\n    \"inventoryChecklist\": [\n        {\"name\": \"Ant poison\", \"status\": \"Check\", \"notes\": \"\"}, \n        {\"name\": \"Coffee filters\", \"status\": \"Check\", \"notes\": \"\"},\n        {\"name\": \"Dish soap\", \"status\": \"Check\", \"notes\": \"\"}\n    ],\n    \"kitchenInventoryChecklist\": [\n        {\"name\": \"Blender\", \"status\": \"Check\", \"notes\": \"\"}, \n        {\"name\": \"Cutting board\", \"status\": \"Check\", \"notes\": \"\"},\n        {\"name\": \"Kettle\", \"status\": \"Check\", \"notes\": \"\"}\n    ],\n    \"monthlyInspectionChecklist\": [\n        {\"name\": \"Remotes work\", \"status\": \"Check\", \"notes\": \"\"}, \n        {\"name\": \"Septic flush\", \"status\": \"Check\", \"notes\": \"\"},\n        {\"name\": \"Fire extinguishers checked\", \"status\": \"Check\", \"notes\": \"\"}\n    ],\n    \"bimonthlyInspectionChecklist\": [\n        {\"name\": \"Water filter\", \"status\": \"Check\", \"notes\": \"\"}, \n        {\"name\": \"HVAC filter\", \"status\": \"Check\", \"notes\": \"\"},\n        {\"name\": \"Game areas\", \"status\": \"Check\", \"notes\": \"\"}\n    ],\n    \"trimonthlyInspectionChecklist\": [\n        {\"name\": \"Leather cleaning\", \"status\": \"Check\", \"notes\": \"\"}, \n        {\"name\": \"Smoke/Carbon Monoxide detectors\", \"status\": \"Check\", \"notes\": \"\"},\n        {\"name\": \"First aid kit checked\", \"status\": \"Check\", \"notes\": \"\"}\n    ],\n    \"inventoryNeeded\" : [\"Paper plates\", \"Coffee filters\"],\n    \"attentionRequired\" : []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/properties",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"properties"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Property",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/properties/657372f8b5f42ea1ee99e3d7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"properties",
+								"657372f8b5f42ea1ee99e3d7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Property",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"inventoryNeeded\" : [\"Paper plates\", \"Coffee filters\"],\n    \"attentionRequired\" : [\"Water leak\", \"Replace doormat\"]    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/properties/65c005fe1e9bfa74eb8fd85f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"properties",
+								"65c005fe1e9bfa74eb8fd85f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Property",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/properties/65bff47619fa7a928eca169d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"properties",
+								"65bff47619fa7a928eca169d"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"example@example.com\",\n    \"password\": \"password\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Smith\",\n    \"avatar\": \"https://ui-avatars.com/api/?name=John+Smith\",\n    \"accountType\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users/65737ae7ea3fb3baaca82e25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"65737ae7ea3fb3baaca82e25"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit User",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"EDITED@example.com\",\n    \"password\": \"password\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Smith\",\n    \"avatar\": \"https://ui-avatars.com/api/?name=John+Smith\",\n    \"accountType\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users/65737ae7ea3fb3baaca82e25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"65737ae7ea3fb3baaca82e25"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/users/65737ae7ea3fb3baaca82e25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"65737ae7ea3fb3baaca82e25"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lists",
+			"item": [
+				{
+					"name": "Get All Lists",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/lists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"lists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add List",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"list\": [\"Apple\", \"Banana\", \"Clementine\", \"Dragonfruit\"],\n    \"listType\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/lists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"lists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/lists/65737fe9d462e46a466fd779",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"lists",
+								"65737fe9d462e46a466fd779"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit List",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"list\": [\"EDITED\", \"Apple\", \"Banana\", \"Clementine\", \"Dragonfruit\"],\n    \"listType\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/lists/65737fe9d462e46a466fd779",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"lists",
+								"65737fe9d462e46a466fd779"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete List",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/lists/65738018d462e46a466fd781",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"lists",
+								"65738018d462e46a466fd781"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Records",
+			"item": [
+				{
+					"name": "Get All Records",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/records",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"records"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Record",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"1987-09-28\",\n    \"propertyAddress\": \"123 Church St\",\n    \"service\": \"Cleaning\",\n    \"employee\": \"Henry Kim\",\n    \"startTime\": \"0900\",\n    \"submissionTime\": \"1200\",\n    \"billableHours\": 2.5,\n    \"status\": \"In-Progress\",\n    \"checklistData\": [],\n    \"reportedIssues\": [],\n    \"uploadedPhotos\": [],\n    \"employeeComments\": \"\",\n    \"adminNotes\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/records",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"records"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Record",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/records/657386850893df7c912a7edc",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"records",
+								"657386850893df7c912a7edc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Record",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"1987-09-28\",\n    \"propertyAddress\": \"EDITED 123 Church St\",\n    \"serviceType\": 3,\n    \"service\": 4,\n    \"employee\": \"example@example.com\",\n    \"startTime\": \"0900\",\n    \"completionTime\": \"1200\",\n    \"billableHours\": 2.5,\n    \"status\": 2,\n    \"damagedNotes\": \"None\",\n    \"missingNotes\": \"Gas grill\",\n    \"employeeNotes\": \"It's going to cost them!\",\n    \"adminNotes\": \"Oh yea, it is\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/records/657386810893df7c912a7eda",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"records",
+								"657386810893df7c912a7eda"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Record",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/records/65c02dddce021ab10b754e69",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"records",
+								"65c02dddce021ab10b754e69"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

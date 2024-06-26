@@ -163,17 +163,29 @@ const FieldCleaningChecklist = () => {
       ],
     };
     const employeeComments = { employeeComments: comments };
-    const completedStatus = { status: "Completed" };
-    const updatedChecklist = {
+    console.log(reports.reportedIssues[0].status);
+    console.log(reports.reportedIssues[1].status);
+    console.log(reports.reportedIssues[0].status === "true");
+
+    const submittedStatus =
+      reports.reportedIssues[0].status === "true" ||
+      reports.reportedIssues[1].status === "true"
+        ? { status: "Needs Attention" }
+        : { status: "Completed" };
+    console.log(submittedStatus);
+
+    const submissionTime = { submissionTime: Date(Date.now().toString()) };
+    const submittedData = {
+      ...submissionTime,
       ...checklists,
       ...reports,
       ...employeeComments,
-      ...completedStatus,
+      ...submittedStatus,
     };
     try {
       const response = await axios.patch(
         `http://localhost:5000/api/v1/records/${recordID}`,
-        updatedChecklist
+        submittedData
       );
       console.log(response);
     } catch (err) {
@@ -197,11 +209,11 @@ const FieldCleaningChecklist = () => {
       ],
     };
     const employeeComments = { employeeComments: comments };
-    const updatedChecklist = { ...checklists, ...reports, ...employeeComments };
+    const updatedData = { ...checklists, ...reports, ...employeeComments };
     try {
       const response = await axios.patch(
         `http://localhost:5000/api/v1/records/${recordID}`,
-        updatedChecklist
+        updatedData
       );
       console.log(response.data.record);
     } catch (err) {
