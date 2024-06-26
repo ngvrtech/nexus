@@ -1,11 +1,15 @@
+require('dotenv').config();
+require('express-async-errors');
+
 const express = require('express');
 const app = express();
+
 const users = require('./routes/users');
 const properties = require('./routes/properties');
 const lists = require('./routes/lists');
 const records = require('./routes/records');
+
 const connectDB = require('./db/connect');
-require('dotenv').config();
 const notFound = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
@@ -21,7 +25,7 @@ app.use('/api/v1/records', records);
 app.use(notFound);
 app.use(errorHandlerMiddleware);
 
-const port = 3000;
+const port = process.env.PORT || 5000;
 
 const start = async () => {
 	try {
