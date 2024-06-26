@@ -2,7 +2,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./components/Login";
-// import "./App.css";
 import "./scss/styles.scss";
 // import * as bootstrap from "bootstrap";
 
