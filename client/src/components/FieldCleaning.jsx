@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 
 const FieldCleaningChecklist = () => {
-  const propertyID = useParams();
+  const { propertyID, recordID } = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     name: "Housekeeper1",
     avatar: "https://i.pravatar.cc/300",
@@ -32,20 +33,19 @@ const FieldCleaningChecklist = () => {
   const [photos, setPhotos] = useState([]);
   const [comments, setComments] = useState("");
   const [missingItems, setMissingItems] = useState({
-    status: false,
+    status: null,
     notes: "",
   });
   const [damaged, setDamaged] = useState({
-    status: false,
+    status: null,
     notes: "",
   });
 
   const fetchProperty = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/v1/properties/${propertyID.id}`
+        `http://localhost:5000/api/v1/properties/${propertyID}`
       );
-      console.log(response.data.property);
       setProperty(response.data.property);
       setCleaningChecklist(response.data.property.cleaningChecklist);
     } catch (err) {
@@ -53,7 +53,63 @@ const FieldCleaningChecklist = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSubmit = async () => {
+    const checklists = { checklistData: [cleaningChecklist] };
+    const reports = {
+      reportedIssues: [
+        {
+          type: "Missing",
+          status: missingItems.status,
+          notes: missingItems.notes,
+        },
+        { type: "Damaged", status: damaged.status, notes: damaged.notes },
+      ],
+    };
+    const employeeComments = { employeeComments: comments };
+    const completedStatus = { status: "Completed" };
+    const updatedChecklist = {
+      ...checklists,
+      ...reports,
+      ...employeeComments,
+      ...completedStatus,
+    };
+    try {
+      const response = await axios.patch(
+        `http://localhost:5000/api/v1/records/${recordID}`,
+        updatedChecklist
+      );
+      console.log(response);
+    } catch (err) {
+      console.log(err.response || err.request || err.message);
+    }
+    navigate(`/field/${propertyID}`, { replace: true });
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    const checklists = { checklistData: [cleaningChecklist] };
+    const reports = {
+      reportedIssues: [
+        {
+          type: "Missing",
+          status: missingItems.status,
+          notes: missingItems.notes,
+        },
+        { type: "Damaged", status: damaged.status, notes: damaged.notes },
+      ],
+    };
+    const employeeComments = { employeeComments: comments };
+    const updatedChecklist = { ...checklists, ...reports, ...employeeComments };
+    try {
+      const response = await axios.patch(
+        `http://localhost:5000/api/v1/records/${recordID}`,
+        updatedChecklist
+      );
+      console.log(response.data);
+    } catch (err) {
+      console.log(err.response || err.request || err.message);
+    }
+
     setSaveStatus(false);
   };
 
@@ -81,13 +137,34 @@ const FieldCleaningChecklist = () => {
     setSaveStatus(true);
   };
 
+  const handleDamaged = (e) => {
+    setDamaged({ ...damaged, notes: e.target.value });
+    setSaveStatus(true);
+  };
+
   const handleComments = (e) => {
     setComments(e.target.value);
     setSaveStatus(true);
   };
 
-  const confirmDelete = () =>
-    window.confirm("Are you sure you want to delete this service?");
+  const handleCancel = async () => {
+    const shouldCancel = window.confirm(
+      "Are you sure you want to cancel this service?"
+    );
+    if (shouldCancel) {
+      try {
+        const response = await axios.patch(
+          `http://localhost:5000/api/v1/records/${recordID}`,
+          { status: "Cancelled" }
+        );
+        console.log(response.data);
+      } catch (err) {
+        console.log(err.response || err.request || err.message);
+      }
+
+      navigate(`/field/${propertyID}`, { replace: true });
+    }
+  };
 
   const getAlertClass = (status) => {
     const classMap = {
@@ -267,8 +344,8 @@ const FieldCleaningChecklist = () => {
                   id="missing"
                   className="form-control align-top"
                   style={{ width: "20rem", height: "9rem" }}
-                  onChange={handleMissingItems}
-                  value={missingItems.notes}
+                  onChange={handleDamaged}
+                  value={damaged.notes}
                 />
                 <label>Notes for Damages</label>
               </div>
@@ -337,7 +414,7 @@ const FieldCleaningChecklist = () => {
               <button
                 className="btn btn-success mb-2"
                 style={{ width: "20rem" }}
-                //   onClick={}
+                onClick={handleSubmit}
               >
                 Submit
               </button>
@@ -372,9 +449,9 @@ const FieldCleaningChecklist = () => {
             <button
               className="btn btn-danger mb-5"
               style={{ width: "20rem" }}
-              onClick={confirmDelete}
+              onClick={handleCancel}
             >
-              Delete
+              Cancel
             </button>
             {/* <div className="alert alert-danger">
               Are you sure you want to delete this service? This action cannot

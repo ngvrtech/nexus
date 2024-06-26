@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const FieldOptions = () => {
@@ -12,6 +12,7 @@ const FieldOptions = () => {
     image: "https://placehold.co/600x400",
   });
   const propertyID = useParams();
+  const navigate = useNavigate();
 
   const newServices = [
     { name: "Cleaning", link: "cleaning" },
@@ -29,6 +30,36 @@ const FieldOptions = () => {
       );
       console.log(response.data.property);
       setProperty(response.data.property);
+    } catch (err) {
+      console.log(err.response || err.request || err.message);
+    }
+  };
+
+  const handleNewService = async (e, name, link) => {
+    e.preventDefault();
+    const newService = {
+      date: Date(Date.now().toString()),
+      propertyAddress: property.address,
+      service: name,
+      employee: "Henry Kim",
+      startTime: Date(Date.now().toString()),
+      submissionTime: undefined,
+      billableHours: 0,
+      status: "In-Progress",
+      checklistData: [],
+      reportedIssues: [],
+      uploadedPhotos: [],
+      employeeComments: "",
+      adminNotes: "",
+    };
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/records",
+        newService
+      );
+      console.log(response.data);
+      navigate(`${link}/${response.data.record._id}`);
+      console.log(response);
     } catch (err) {
       console.log(err.response || err.request || err.message);
     }
@@ -142,10 +173,13 @@ const FieldOptions = () => {
               >
                 {newServices.map((service) => {
                   return (
-                    <li key={service.name}>
+                    <li key={service.link}>
                       <a
                         className="dropdown-item"
-                        href={`${propertyID.id}/${service.link}`}
+                        href="#"
+                        onClick={(e) =>
+                          handleNewService(e, service.name, service.link)
+                        }
                       >
                         {service.name}
                       </a>
