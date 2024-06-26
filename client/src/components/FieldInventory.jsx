@@ -152,7 +152,7 @@ const FieldInventory = () => {
           </div>
           <div className="d-flex justify-content-center">
             <div className="col-11">
-              {/* Displays all inventory items with click functionality and notes */}
+              {/* Displays all inventory items with status click functionality and notes */}
               {inventory.map((item) => {
                 return (
                   <div
