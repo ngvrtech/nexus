@@ -1,47 +1,99 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 const FieldOptions = () => {
+  // Authenticated user information - ATTENTION NEEDED
   const [user, setUser] = useState({
     name: "Housekeeper1",
     avatar: "https://i.pravatar.cc/300",
   });
-  const [property, setProperty] = useState({
-    address: "123 Main Street",
-    image: "https://placehold.co/600x400",
-  });
+
+  // Stores state of selected property
+  const [property, setProperty] = useState({});
+
   const propertyID = useParams();
   const navigate = useNavigate();
 
+  // List of services offered for each account type
   const newServices = [
-    { name: "Cleaning", link: "cleaning" },
-    { name: "Inventory", link: "inventory" },
-    { name: "Kichen Inventory", link: "kitchen-inventory" },
-    { name: "Monthly Inspection", link: "monthly-inspection" },
-    { name: "Bi-Monthly Inspection", link: "bimonthly-inspection" },
-    { name: "Tri-Monthly Inspection", link: "tri-monthly-inspection" },
+    { name: "Cleaning", accountType: "housekeeping", link: "cleaning" },
+    { name: "Inventory", accountType: "operations", link: "inventory" },
+    {
+      name: "Kichen Inventory",
+      accountType: "operations",
+      link: "kitchen-inventory",
+    },
+    {
+      name: "Monthly Inspection",
+      accountType: "operations",
+      link: "monthly-inspection",
+    },
+    {
+      name: "Bi-Monthly Inspection",
+      accountType: "operations",
+      link: "bimonthly-inspection",
+    },
+    {
+      name: "Tri-Monthly Inspection",
+      accountType: "operations",
+      link: "trimonthly-inspection",
+    },
   ];
 
+  // Function to fetch data for selected property
   const fetchProperty = async () => {
     try {
       const response = await axios.get(
         `http://localhost:5000/api/v1/properties/${propertyID.id}`
       );
-      console.log(response.data.property);
       setProperty(response.data.property);
     } catch (err) {
       console.log(err.response || err.request || err.message);
     }
   };
 
-  const handleNewService = async (e, name, link) => {
+  // Fetches property data on page load
+  useEffect(() => {
+    fetchProperty();
+  }, []);
+
+  // PATCH logic to clear all items in "inventory needed" list for property
+  // Reloads new property data
+  const handleReplenished = async () => {
+    try {
+      await axios.patch(
+        `http://localhost:5000/api/v1/properties/${propertyID.id}`,
+        { inventoryNeeded: [] }
+      );
+      fetchProperty();
+    } catch (err) {
+      console.log(err.response || err.request || err.message);
+    }
+  };
+
+  // PATCH logic to clear all items in "attention required" list for property
+  // Reloads new property data
+  const handleAddressed = async () => {
+    try {
+      await axios.patch(
+        `http://localhost:5000/api/v1/properties/${propertyID.id}`,
+        { attentionRequired: [] }
+      );
+      fetchProperty();
+    } catch (err) {
+      console.log(err.response || err.request || err.message);
+    }
+  };
+
+  // Creates new service record with default values, redirects to service page
+  const newServiceRecord = async (e, name, link) => {
     e.preventDefault();
-    const newService = {
+    const defaultData = {
       date: Date(Date.now().toString()),
       propertyAddress: property.address,
       service: name,
-      employee: "Henry Kim",
+      employee: user.name,
       startTime: Date(Date.now().toString()),
       submissionTime: undefined,
       billableHours: 0,
@@ -55,43 +107,13 @@ const FieldOptions = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/v1/records",
-        newService
+        defaultData
       );
-      console.log(response.data);
       navigate(`${link}/${response.data.record._id}`);
-      console.log(response);
     } catch (err) {
       console.log(err.response || err.request || err.message);
     }
   };
-
-  const handleReplenished = async () => {
-    try {
-      await axios.patch(
-        `http://localhost:5000/api/v1/properties/${propertyID.id}`,
-        { inventoryNeeded: [] }
-      );
-      fetchProperty();
-    } catch (err) {
-      console.log(err.response || err.request || err.message);
-    }
-  };
-
-  const handleAddressed = async () => {
-    try {
-      await axios.patch(
-        `http://localhost:5000/api/v1/properties/${propertyID.id}`,
-        { attentionRequired: [] }
-      );
-      fetchProperty();
-    } catch (err) {
-      console.log(err.response || err.request || err.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchProperty();
-  }, []);
 
   return (
     <div className="container-fluid vh-100 d-flex justify-content-center mt-4">
@@ -102,13 +124,13 @@ const FieldOptions = () => {
               <img style={{ width: "10rem" }} src="/ngvr-logo.png" />
             </Link>
           </div>
-
           <div className="row p-4">
             <div className="card mx-3" style={{ width: "20rem" }}>
               <img className="card-img-top pt-3" src={property.image} />
               <h5 className="card-title m-2">{property.address}</h5>
             </div>
           </div>
+          {/* If property needs inventory, alert is visible and displays items/button */}
           {property.inventoryNeeded && property.inventoryNeeded.length === 0 ? (
             <div></div>
           ) : (
@@ -132,6 +154,7 @@ const FieldOptions = () => {
               </div>
             </div>
           )}
+          {/* If property requires attention, alert is visible and displays tasks/button */}
           {property.attentionRequired &&
           property.attentionRequired.length === 0 ? (
             <div></div>
@@ -157,6 +180,7 @@ const FieldOptions = () => {
             </div>
           )}
           <div>
+            {/* Dropdown new service button with list of available services */}
             <div className="dropdown-center">
               <button
                 className="btn btn-success mb-3 dropdown-toggle"
@@ -178,7 +202,7 @@ const FieldOptions = () => {
                         className="dropdown-item"
                         href="#"
                         onClick={(e) =>
-                          handleNewService(e, service.name, service.link)
+                          newServiceRecord(e, service.name, service.link)
                         }
                       >
                         {service.name}
@@ -189,6 +213,8 @@ const FieldOptions = () => {
               </ul>
             </div>
           </div>
+          {/* Drop down resume service button displays "In-Progress" services */}
+          {/* Non-functional - ATTENTION NEEDED */}
           <div className="dropdown-center">
             <button
               className="btn btn-warning mb-4 dropdown-toggle"
@@ -215,7 +241,7 @@ const FieldOptions = () => {
               </li>
             </ul>
           </div>
-
+          {/* User information and logout button */}
           <div className="mt-5 mb-4">
             <img className="rounded-circle" height="35px" src={user.avatar} />
             <span className="m-3">{user.name}</span>
