@@ -20,7 +20,7 @@ const FieldOptions = () => {
     { name: "Cleaning", accountType: "housekeeping", link: "cleaning" },
     { name: "Inventory", accountType: "operations", link: "inventory" },
     {
-      name: "Kichen Inventory",
+      name: "Kitchen Inventory",
       accountType: "operations",
       link: "kitchen-inventory",
     },
