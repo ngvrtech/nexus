@@ -27,15 +27,65 @@ const FieldOptions = () => {
               <h5 className="card-title m-2">{property.address}</h5>
             </div>
           </div>
+
           <div>
-            <button className="btn btn-success mb-3" style={{ width: "20rem" }}>
-              New Service
-            </button>
+            <div className="dropdown-center">
+              <button
+                className="btn btn-success mb-3 dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                style={{ width: "20rem" }}
+              >
+                New Service&nbsp;
+              </button>
+              <ul
+                className="dropdown-menu text-center"
+                style={{ width: "20rem" }}
+              >
+                <li>
+                  <a className="dropdown-item" href="#">
+                    Inventory
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item" href="#">
+                    Cleaning Service
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item" href="#">
+                    Monthly Inspection
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div>
-            <button className="btn btn-warning mb-5" style={{ width: "20rem" }}>
-              Resume Service
+          <div className="dropdown-center">
+            <button
+              className="btn btn-warning mb-4 dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              style={{ width: "20rem" }}
+            >
+              Resume Service &nbsp;
             </button>
+            <ul
+              className="dropdown-menu text-center"
+              style={{ width: "20rem" }}
+            >
+              <li>
+                <a className="dropdown-item" href="#">
+                  Inventory | Started on 2/3/24
+                </a>
+              </li>
+              <li>
+                <a className="dropdown-item" href="#">
+                  Cleaning Checklist | Started on 2/3/24
+                </a>
+              </li>
+            </ul>
           </div>
           <div className="d-flex justify-content-center">
             <div
