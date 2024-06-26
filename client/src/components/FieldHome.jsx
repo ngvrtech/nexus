@@ -25,21 +25,17 @@ const FieldHome = () => {
   };
 
   return (
-    <div className="container-fluid vh-100 d-flex justify-content-center mt-5">
+    <div className="container-fluid vh-100 d-flex justify-content-center mt-4">
       <div className="row">
         <div className="col-12 text-center">
           <div>
             <img
               className="mb-4"
-              style={{ width: "15rem" }}
+              style={{ width: "10rem" }}
               src="/ngvr-logo.png"
             />
           </div>
-          <div className="mb-4">
-            <img className="rounded-circle" height="35px" src={user.avatar} />
-            <span className="m-3">{user.name}</span>
-            <button className="btn btn-outline-secondary btn-sm">Logout</button>
-          </div>
+
           <form>
             <div className="d-flex justify-content-center">
               <div className="form-floating">
@@ -87,6 +83,11 @@ const FieldHome = () => {
                     </div>
                   );
                 })}
+          </div>
+          <div className="mt-5 mb-4">
+            <img className="rounded-circle" height="35px" src={user.avatar} />
+            <span className="m-3">{user.name}</span>
+            <button className="btn btn-outline-secondary btn-sm">Logout</button>
           </div>
         </div>
       </div>
