@@ -1,9 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import DashboardDetails from "./DashboardDetails";
 
 const AdminDashboard = () => {
-  const [records, setRecords] = useState({});
+  const [records, setRecords] = useState([]);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchRecords = async () => {
     try {
@@ -13,8 +16,6 @@ const AdminDashboard = () => {
       console.log(err.response || err.request || err.message);
     }
   };
-
-  //   console.log(records);
 
   useEffect(() => {
     fetchRecords();
@@ -30,7 +31,19 @@ const AdminDashboard = () => {
         return "table-secondary";
       case "Needs Attention":
         return "table-danger";
+      default:
+        return "";
     }
+  };
+
+  const handleViewDetails = (record) => {
+    setSelectedRecord(record);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedRecord(null);
+    setIsModalOpen(false);
   };
 
   return (
@@ -81,7 +94,7 @@ const AdminDashboard = () => {
                 aria-controls="home"
                 aria-selected="true"
               >
-                Active Records
+                <h3>Active Records</h3>
               </button>
             </li>
             <li className="nav-item" role="presentation">
@@ -95,7 +108,7 @@ const AdminDashboard = () => {
                 aria-controls="profile"
                 aria-selected="false"
               >
-                Inactive Recods
+                <h3>Inactive Records</h3>
               </button>
             </li>
           </ul>
@@ -171,13 +184,57 @@ const AdminDashboard = () => {
                         </td>
                         <td>{record.status}</td>
                         <td>{record.employeeComments}</td>
-                        <td></td>
+                        <td>
+                          <button
+                            type="button"
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => handleViewDetails(record)}
+                          >
+                            View Details
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}
               </tbody>
             </table>
           </div>
+          {isModalOpen && (
+            <div
+              className="modal fade show"
+              style={{ display: "block" }}
+              tabIndex="-1"
+              role="dialog"
+              aria-labelledby="exampleModalCenterTitle"
+              aria-hidden="true"
+            >
+              <div
+                className="modal-dialog modal-dialog-centered"
+                role="document"
+              >
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLongTitle">
+                      Details for service at {selectedRecord.propertyAddress}
+                    </h5>
+                    <button
+                      type="button"
+                      className="close"
+                      onClick={handleCloseDetails}
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    <DashboardDetails
+                      record={selectedRecord}
+                      onClose={handleCloseDetails}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
