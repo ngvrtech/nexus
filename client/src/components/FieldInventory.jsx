@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 const FieldInventory = () => {
@@ -42,6 +43,9 @@ const FieldInventory = () => {
 
   // Stores text in comments section
   const [comments, setComments] = useState("");
+
+  const { propertyID, recordID } = useParams();
+  const navigate = useNavigate();
 
   // Supporting functions to change task color/status
   const getAlertClass = (status) => {
@@ -104,6 +108,30 @@ const FieldInventory = () => {
   const handleComments = (e) => {
     setComments(e.target.value);
     setSaveStatus(true);
+  };
+
+  const handleSubmit = async () => {
+    const checklists = { checklistData: [inventory] };
+    const employeeComments = { employeeComments: comments };
+    const status = { status: "Completed" };
+    const submissionTime = { submissionTime: Date(Date.now().toString()) };
+    const submittedData = {
+      ...checklists,
+      ...employeeComments,
+      ...status,
+      ...submissionTime,
+    };
+    try {
+      const response = await axios.patch(
+        `http://localhost:5000/api/v1/records/${recordID}`,
+        submittedData
+      );
+      console.log(response);
+    } catch (err) {
+      console.log(err.response || err.request || err.message);
+    }
+    navigate(`/field/${propertyID}`, { replace: true });
+    // TODO: Update the property inventoryNeeded
   };
 
   // Logic for Save button
@@ -228,7 +256,7 @@ const FieldInventory = () => {
               <button
                 className="btn btn-success mb-2"
                 style={{ width: "20rem" }}
-                //   onClick={} - ATTENTION NEEDED
+                onClick={handleSubmit}
               >
                 Submit
               </button>
